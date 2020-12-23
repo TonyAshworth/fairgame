@@ -31,8 +31,9 @@ AMAZON_URLS = {
 }
 CHECKOUT_URL = "https://{domain}/gp/cart/desktop/go-to-checkout.html/ref=ox_sc_proceed?partialCheckoutCart=1&isToBeGiftWrappedBefore=0&proceedToRetailCheckout=Proceed+to+checkout&proceedToCheckout=1&cartInitiateId={cart_id}"
 
-AUTOBUY_CONFIG_PATH = "config/amazon_config.json"
-CREDENTIAL_FILE = "config/amazon_credentials.json"
+CONFIG_PATH = "config"
+AUTOBUY_CONFIG_FILE = "amazon_config.json"
+CREDENTIAL_FILE = "amazon_credentials.json"
 
 SIGN_IN_TEXT = [
     "Hello, Sign in",
@@ -191,6 +192,7 @@ class Amazon:
         disable_presence=False,
         slow_mode=False,
         encryption_pass=None,
+        config_file=None
     ):
         self.notification_handler = notification_handler
         self.asin_list = []
@@ -228,20 +230,27 @@ class Amazon:
             except:
                 raise
 
-        if os.path.exists(CREDENTIAL_FILE):
-            credential = load_encrypted_config(CREDENTIAL_FILE, encryption_pass)
+        creds_file = os.path.join(CONFIG_PATH, CREDENTIAL_FILE)
+
+        if os.path.exists(creds_file):
+            credential = load_encrypted_config(creds_file, encryption_pass)
             self.username = credential["username"]
             self.password = credential["password"]
         else:
             log.info("No credential file found, let's make one")
             log.info("NOTE: DO NOT SAVE YOUR CREDENTIALS IN CHROME, CLICK NEVER!")
             credential = self.await_credential_input()
-            create_encrypted_config(credential, CREDENTIAL_FILE)
+            create_encrypted_config(credential, creds_file)
             self.username = credential["username"]
             self.password = credential["password"]
 
-        if os.path.exists(AUTOBUY_CONFIG_PATH):
-            with open(AUTOBUY_CONFIG_PATH) as json_file:
+        if config_file == None:
+            config_file = os.path.join(CONFIG_PATH, config_file)
+        else
+            config_file = os.path.join(CONFIG_PATH, AUTOBUY_CONFIG_FILE)
+
+        if os.path.exists(config_file):
+            with open(config_file) as json_file:
                 try:
                     config = json.load(json_file)
                     self.asin_groups = int(config["asin_groups"])
