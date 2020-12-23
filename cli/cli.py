@@ -126,6 +126,12 @@ def main():
     default=None,
     help="Pass in encryption file password as argument",
 )
+@click.option(
+    "--config-file",
+    type=str,
+    default=None,
+    help="Pass in config file as argument",
+)
 @notify_on_crash
 def amazon(
     no_image,
@@ -141,6 +147,7 @@ def amazon(
     disable_sound,
     slow_mode,
     p,
+    config_file,
 ):
 
     notification_handler.sound_enabled = not disable_sound
@@ -159,6 +166,7 @@ def amazon(
         slow_mode=slow_mode,
         encryption_pass=p,
         no_image=no_image,
+        config_file=config_file,
     )
     try:
         amzn_obj.run(delay=delay, test=test)
