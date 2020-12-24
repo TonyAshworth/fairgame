@@ -256,6 +256,7 @@ class Amazon:
             with open(config_file) as json_file:
                 try:
                     config = json.load(json_file)
+                    self.user_profile = config["user_profile"]
                     self.asin_groups = int(config["asin_groups"])
                     self.amazon_website = config.get(
                         "amazon_website", "smile.amazon.com"
@@ -1137,7 +1138,7 @@ class Amazon:
             else:
                 prefs["profile.managed_default_content_settings.images"] = 0
             options.add_experimental_option("prefs", prefs)
-            options.add_argument(f"user-data-dir=.profile-amz")
+            options.add_argument(f"user-data-dir=" + self.user_profile)
             if not self.slow_mode:
                 options.set_capability("pageLoadStrategy", "none")
 
